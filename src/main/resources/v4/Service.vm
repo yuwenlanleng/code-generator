@@ -1,0 +1,66 @@
+package ${service_package};
+
+import ${entity_package}.${Entity};
+import java.util.List;
+import java.util.Map;
+
+import com.gomefinance.account.data.dto.Page;
+import com.gomefinance.account.data.dto.EntityWrapperResponse;
+import com.gomefinance.account.common.enmus.EnumSystem;
+ /** 
+ * @ClassName: ${Entity}Service
+ * @Description: ${tableInfEntity.description}(${tableInfEntity.tableName})对应Service
+ * @author ${autoGenInf.author}
+ * @date ${autoGenInf.date} 
+ */
+public interface ${Entity}Service{
+	/** 
+	* @Title: queryPage 
+	* @Description: 分页查询
+	* @param page
+	* @param t
+	* @return 
+	*/
+	Page<${Entity}> queryPage(Page<${Entity}> page,${Entity} t);
+	
+	/** 
+	* @Title: add 
+	* @Description: 添加${tableInfEntity.description}
+	* @param entity
+	* @return 
+	*/
+	EntityWrapperResponse add(${Entity} entity);
+	
+	/** 
+	* @Title: findOne 
+	* @Description: 查询${tableInfEntity.description}
+	* @param entity
+	* @return 
+	*/
+	${Entity} findOne(${Entity} entity);
+	
+	/** 
+	* @Title: update 
+	* @Description: 修改${tableInfEntity.description}
+	* @param entity
+	* @return 
+	*/
+	EntityWrapperResponse update(${Entity} entity);
+	
+	/** 
+	* @Title: delete
+	* @Description: 删除
+	* @param entity
+	* @return 
+	*/
+	EntityWrapperResponse delete(${Entity} entity);
+
+	/**
+	* @Title: saveOrUpdate
+	* @Description: 新增或修改${tableInfEntity.description}
+	* @param entity
+	* @return
+	*/
+	EntityWrapperResponse saveOrUpdate(${Entity} entity);
+	
+}

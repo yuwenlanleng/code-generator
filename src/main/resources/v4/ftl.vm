@@ -1,0 +1,55 @@
+<#import "../../lib/spring.ftl" as spring/>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><@spring.message code="app.title" /></title>
+    <\#include "../../common/css.ftl"/>
+    <\#include "../../common/jslib.ftl"/>
+    <\#include "../../common/jsbiz.ftl"/>
+</head>
+</html>
+<#assign ext=JspTaglibs["http://www.gomefinance.com/ext"]/>
+
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center',fit:true">
+        <div id="${EntityLow}-tab" style="padding:3px">
+            <div class="easyui-panel" style="width:100%;padding:10px;" >
+                <table width="100%" style="font-size:12px;">
+                <tr>
+					#set($count = 0)
+					#foreach($field in $tableInfEntity.columnMap.entrySet())
+						#if(${field.value.search})
+							#if($count > 0 && $count % 4 == 0)
+                            </tr>
+                            <tr>
+							#end
+                            <td>${field.value.description}:</td>
+							#if(${field.value.boxType} == 'TEXTBOX')
+								<td><input id="${field.value.jcolumnName}" name="${field.value.jcolumnName}" class="easyui-textbox" style="width: 150px;"></td>
+							#elseif (${field.value.boxType} == 'COMBOBOX')
+								<td>
+									<@ext.select width="150px" id="${field.value.jcolumnName}" name="${field.value.jcolumnName}" isAll=true className="${field.value.selectValue}" ></@ext.select>
+								</td>
+							#elseif (${field.value.boxType} == 'DATEBOX')
+								<td><input id="${field.value.jcolumnName}" name="${field.value.jcolumnName}"  class="easyui-datebox" data-options="showSeconds:true" style="width:150px;"></td>
+							#else
+								<td><input id="${field.value.jcolumnName}" name="${EntityLow}.${field.value.jcolumnName}" class="easyui-textbox"  style="width: 150px;"></td>
+							#end
+							#set($count = $count + 1 )
+						#end
+					#end
+                </tr>
+                </table>
+            </div>
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="${Entity}.search();"><i class="fa fa-search fa-lg"></i>查询</a>
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="${Entity}.reset();"><i class="fa fa-rotate-left fa-lg"></i>重置</a>
+        </div>
+        <table id="${EntityLow}-table" style="width: 100%;" class="easyui-datagrid">
+        </table>
+    </div>
+</div>
+<script>
+		${Entity}.init();
+</script>

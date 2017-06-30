@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+  	@description : ${tableInfEntity.description}Mapper文件
+  				      表名*	${tableInfEntity.tableName}			
+				      署主*	${tableInfEntity.schema}			
+				      说明*	${tableInfEntity.description}			
+	                                      主键*${tableInfEntity.primaryKeyMap}	
+	                                      索引*${tableInfEntity.uniqueKeyMap}
+ 	@author       ${autoGenInf.author}
+  	@version      1.0  
+ 	@date         ${autoGenInf.date}
+-->
+<mapper namespace="${mapper_package}.${Entity}Mapper">
+
+	<!-- Entity和数据库表列映射 -->
+	<resultMap id="${Entity}Result" type="${entity_package}.${Entity}">
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+        <result column="${field.value.columnName}" property="${field.value.jcolumnName}" />
+#end
+	</resultMap>
+
+	<!--表名-->
+	<sql id="table_name">
+		${tableInfEntity.tableName}
+	</sql>
+
+	<!-- 数据库列 -->
+	<sql id="columns">
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+#if($velocityCount == $tableInfEntity.columnMap.size())
+        ${field.value.columnName}
+#else
+        ${field.value.columnName},
+#end
+#end
+	</sql>
+
+    <!-- 查询条件列 -->
+	<sql id="${Entity}_conditon">
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+#if("${field.value.jdataType}" == "String")
+    #if(${field.value.searchType} == 3)
+        <if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' "> AND ${field.value.columnName} LIKE  CONCAT(CONCAT('%', #{${field.value.jcolumnName}}),'%')</if>
+    #elseif(${field.value.searchType} == 2)
+        <if test="${field.value.jcolumnName}Begin != null and ${field.value.jcolumnName}Begin !='' and  ${field.value.jcolumnName}End != null and ${field.value.jcolumnName}End !='' "> AND ${field.value.columnName} BETWEEN #{${field.value.jcolumnName}Begin} AND #{${field.value.jcolumnName}End}</if>
+    #else
+        <if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' "> AND ${field.value.columnName} = #{${field.value.jcolumnName}}</if>
+    #end
+#else
+    <if test="${field.value.jcolumnName} != null"> AND ${field.value.columnName} = #{${field.value.jcolumnName}}</if>
+#end
+#end
+	</sql>
+
+	<!-- 更新条件列-->
+	<sql id="${Entity}_update_conditon">
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+#if("${field.value.jdataType}" == "String")
+#if($velocityCount == 1)
+   #if(${field.value.searchType} == 3)
+        <if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' ">${field.value.columnName} LIKE CONCAT(CONCAT('%', #{${field.value.jcolumnName}}),'%')</if>
+   #else
+        <if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' ">${field.value.columnName} = #{${field.value.jcolumnName}}</if>
+   #end
+#else
+   #if(${field.value.searchType} == 3)
+        <if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' ">,${field.value.columnName} LIKE CONCAT(CONCAT('%', #{${field.value.jcolumnName}}),'%')</if>
+   #else
+        <if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' ">,${field.value.columnName} = #{${field.value.jcolumnName}}</if>
+   #end
+#end
+#else
+#if($velocityCount == 1)
+        <if test="${field.value.jcolumnName} != null">${field.value.columnName} = #{${field.value.jcolumnName}}</if>
+#else
+        <if test="${field.value.jcolumnName} != null">,${field.value.columnName} = #{${field.value.jcolumnName}}</if>
+#end
+#end
+#end
+	</sql>
+
+	<!-- 默认排序规则 -->
+	<sql id="${Entity}_default_order">
+		order by #foreach($priKey in $tableInfEntity.primaryKeyMap.entrySet()) #if($velocityCount == 1) ${priKey.key} #else,${priKey.key}
+#end#end
+	</sql>
+
+	<!--插入数据-->
+	<insert id="insert" parameterType="${entity_package}.${Entity}">
+		insert into <include refid="table_name" /> ( <include refid="columns" /> )
+		values(
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+#if($velocityCount == $tableInfEntity.columnMap.size())
+        #{${field.value.jcolumnName}})
+#else
+        #{${field.value.jcolumnName}},
+#end
+#end
+	</insert>
+
+	<!-- 根据主键查找 -->
+	<select id="find" parameterType="${entity_package}.${Entity}" resultMap="${Entity}Result">
+		select <include refid="columns" />
+		from <include refid="table_name" />
+#foreach($priKey in $tableInfEntity.primaryKeyMap.entrySet())
+#if($velocityCount == 1)
+        where ${priKey.key} = #{${priKey.value}} #else and ${priKey.key} = #{${priKey.value}}
+#end
+#end
+	</select>
+
+	<!-- 查找所有记录 -->
+	<select id="queryAll" resultMap="${Entity}Result">
+		select <include refid="columns" />
+		from <include refid="table_name" />
+	</select>
+
+	<!-- 查找符合条件的记录 -->
+	<select id="query" parameterType="${entity_package}.${Entity}" resultMap="${Entity}Result">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="${Entity}_conditon" />
+	</select>
+
+	<!-- 查找符合条件的记录 FOR UPDATE-->
+	<select id="selectForUpdateByPK" parameterType="${entity_package}.${Entity}" resultMap="${Entity}Result">
+		select <include refid="columns" />
+		from <include refid="table_name" />
+#foreach($priKey in $tableInfEntity.primaryKeyMap.entrySet())
+#if($velocityCount == 1)
+        where where ${priKey.key} = #{${priKey.value}} #else and ${priKey.key} = #{${priKey.value}}
+#end
+#end
+	</select>
+
+	<!-- 满足条件的记录数 -->
+	<select id="loadCount" parameterType="${entity_package}.${Entity}" resultType="int">
+		select count(*) from <include refid="table_name" /> where 1=1
+		<include refid="${Entity}_conditon" />
+	</select>
+
+	<!-- 分页查找记录 -->
+	<select id="loadList" parameterType="${entity_package}.${Entity}" resultMap="${Entity}Result">
+		select <include refid="columns" />
+			  from <include refid="table_name" />  where 1 = 1
+					<include refid="${Entity}_conditon" />
+					<include refid="${Entity}_default_order" />
+        LIMIT #{offset},#{pageSize}
+	</select>
+
+	<!-- 更新记录 -->
+	<update id="update" parameterType="${entity_package}.${Entity}">
+		update <include refid="table_name" />
+		set
+		<include refid="${Entity}_update_conditon" />
+#foreach($priKey in $tableInfEntity.primaryKeyMap.entrySet())
+#if($velocityCount == 1)
+        where ${priKey.key} = #{${priKey.value}} #else and ${priKey.key} = #{${priKey.value}}
+#end
+#end
+	</update>
+
+	<!-- 按主键删除记录 -->
+	<delete id="deleteByCondition" parameterType="${entity_package}.${Entity}">
+		delete from <include refid="table_name" />
+#foreach($priKey in $tableInfEntity.primaryKeyMap.entrySet())
+#if($velocityCount == 1)
+        where ${priKey.key} = #{${priKey.value}} #else and ${priKey.key} = #{${priKey.value}}
+#end
+#end
+	</delete>
+
+	<!-- 动态插入数据 -->
+	<insert id="insertSelective" parameterType="${entity_package}.${Entity}">
+		insert into <include refid="table_name" />
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+#if("${field.value.jdataType}" == "String")
+        	<if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' ">${field.value.columnName},</if>
+#else
+        	<if test="${field.value.jcolumnName} != null">${field.value.columnName},</if>
+#end
+#end
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+#if("${field.value.jdataType}" == "String")
+        	<if test="${field.value.jcolumnName} != null and ${field.value.jcolumnName} != '' ">#{${field.value.jcolumnName}},</if>
+#else
+        	<if test="${field.value.jcolumnName} != null">#{${field.value.jcolumnName}},</if>
+#end
+#end
+		</trim>
+	</insert>
+</mapper>

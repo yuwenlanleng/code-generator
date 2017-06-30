@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+  	@description : 短信日志Mapper文件
+  				      表名*	sms_log			
+				      署主*	account			
+				      说明*	短信日志			
+	                                      主键*{id=id}	
+	                                      索引*{}
+ 	@author       潘海成
+  	@version      1.0  
+ 	@date         2017年06月30日 17时59分04秒
+-->
+<mapper namespace="com.gomefinance.account.data.mapper.base.SmsLogMapper">
+
+	<!-- Entity和数据库表列映射 -->
+	<resultMap id="SmsLogResult" type="com.gomefinance.account.data.model.SmsLog">
+        <result column="ID" property="id" />
+        <result column="MOBILE" property="mobile" />
+        <result column="CONTENT" property="content" />
+        <result column="SMS_TYPE" property="smsType" />
+        <result column="SMS_ID" property="smsId" />
+        <result column="STATUS" property="status" />
+        <result column="MSG" property="msg" />
+        <result column="ACT_STATUS" property="actStatus" />
+        <result column="ACT_MSG" property="actMsg" />
+        <result column="SEND_TIME" property="sendTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+	</resultMap>
+
+	<!--表名-->
+	<sql id="table_name">
+		sms_log
+	</sql>
+
+	<!-- 数据库列 -->
+	<sql id="columns">
+        ID,
+        MOBILE,
+        CONTENT,
+        SMS_TYPE,
+        SMS_ID,
+        STATUS,
+        MSG,
+        ACT_STATUS,
+        ACT_MSG,
+        SEND_TIME,
+        UPDATE_TIME
+	</sql>
+
+    <!-- 查询条件列 -->
+	<sql id="SmsLog_conditon">
+    <if test="id != null"> AND ID = #{id}</if>
+            <if test="mobile != null and mobile != '' "> AND MOBILE = #{mobile}</if>
+                <if test="content != null and content != '' "> AND CONTENT = #{content}</if>
+                <if test="smsType != null and smsType != '' "> AND SMS_TYPE = #{smsType}</if>
+                <if test="smsId != null and smsId != '' "> AND SMS_ID = #{smsId}</if>
+                <if test="status != null and status != '' "> AND STATUS = #{status}</if>
+                <if test="msg != null and msg != '' "> AND MSG = #{msg}</if>
+                <if test="actStatus != null and actStatus != '' "> AND ACT_STATUS = #{actStatus}</if>
+                <if test="actMsg != null and actMsg != '' "> AND ACT_MSG = #{actMsg}</if>
+        <if test="sendTime != null"> AND SEND_TIME = #{sendTime}</if>
+    <if test="updateTime != null"> AND UPDATE_TIME = #{updateTime}</if>
+	</sql>
+
+	<!-- 更新条件列-->
+	<sql id="SmsLog_update_conditon">
+        <if test="id != null">ID = #{id}</if>
+           <if test="mobile != null and mobile != '' ">,MOBILE = #{mobile}</if>
+              <if test="content != null and content != '' ">,CONTENT = #{content}</if>
+              <if test="smsType != null and smsType != '' ">,SMS_TYPE = #{smsType}</if>
+              <if test="smsId != null and smsId != '' ">,SMS_ID = #{smsId}</if>
+              <if test="status != null and status != '' ">,STATUS = #{status}</if>
+              <if test="msg != null and msg != '' ">,MSG = #{msg}</if>
+              <if test="actStatus != null and actStatus != '' ">,ACT_STATUS = #{actStatus}</if>
+              <if test="actMsg != null and actMsg != '' ">,ACT_MSG = #{actMsg}</if>
+           <if test="sendTime != null">,SEND_TIME = #{sendTime}</if>
+        <if test="updateTime != null">,UPDATE_TIME = #{updateTime}</if>
+	</sql>
+
+	<!-- 默认排序规则 -->
+	<sql id="SmsLog_default_order">
+		order by   id 	</sql>
+
+	<!--插入数据-->
+	<insert id="insert" parameterType="com.gomefinance.account.data.model.SmsLog">
+		insert into <include refid="table_name" /> ( <include refid="columns" /> )
+		values(
+        #{id},
+        #{mobile},
+        #{content},
+        #{smsType},
+        #{smsId},
+        #{status},
+        #{msg},
+        #{actStatus},
+        #{actMsg},
+        #{sendTime},
+        #{updateTime})
+	</insert>
+
+	<!-- 根据主键查找 -->
+	<select id="find" parameterType="com.gomefinance.account.data.model.SmsLog" resultMap="SmsLogResult">
+		select <include refid="columns" />
+		from <include refid="table_name" />
+        where id = #{id} 	</select>
+
+	<!-- 查找所有记录 -->
+	<select id="queryAll" resultMap="SmsLogResult">
+		select <include refid="columns" />
+		from <include refid="table_name" />
+	</select>
+
+	<!-- 查找符合条件的记录 -->
+	<select id="query" parameterType="com.gomefinance.account.data.model.SmsLog" resultMap="SmsLogResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="SmsLog_conditon" />
+	</select>
+
+	<!-- 查找符合条件的记录 FOR UPDATE-->
+	<select id="selectForUpdateByPK" parameterType="com.gomefinance.account.data.model.SmsLog" resultMap="SmsLogResult">
+		select <include refid="columns" />
+		from <include refid="table_name" />
+        where where id = #{id} 	</select>
+
+	<!-- 满足条件的记录数 -->
+	<select id="loadCount" parameterType="com.gomefinance.account.data.model.SmsLog" resultType="int">
+		select count(*) from <include refid="table_name" /> where 1=1
+		<include refid="SmsLog_conditon" />
+	</select>
+
+	<!-- 分页查找记录 -->
+	<select id="loadList" parameterType="com.gomefinance.account.data.model.SmsLog" resultMap="SmsLogResult">
+		select <include refid="columns" />
+			  from <include refid="table_name" />  where 1 = 1
+					<include refid="SmsLog_conditon" />
+					<include refid="SmsLog_default_order" />
+        LIMIT #{offset},#{pageSize}
+	</select>
+
+	<!-- 更新记录 -->
+	<update id="update" parameterType="com.gomefinance.account.data.model.SmsLog">
+		update <include refid="table_name" />
+		set
+		<include refid="SmsLog_update_conditon" />
+        where id = #{id} 	</update>
+
+	<!-- 按主键删除记录 -->
+	<delete id="deleteByCondition" parameterType="com.gomefinance.account.data.model.SmsLog">
+		delete from <include refid="table_name" />
+        where id = #{id} 	</delete>
+
+	<!-- 动态插入数据 -->
+	<insert id="insertSelective" parameterType="com.gomefinance.account.data.model.SmsLog">
+		insert into <include refid="table_name" />
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+        	<if test="id != null">ID,</if>
+        	<if test="mobile != null and mobile != '' ">MOBILE,</if>
+        	<if test="content != null and content != '' ">CONTENT,</if>
+        	<if test="smsType != null and smsType != '' ">SMS_TYPE,</if>
+        	<if test="smsId != null and smsId != '' ">SMS_ID,</if>
+        	<if test="status != null and status != '' ">STATUS,</if>
+        	<if test="msg != null and msg != '' ">MSG,</if>
+        	<if test="actStatus != null and actStatus != '' ">ACT_STATUS,</if>
+        	<if test="actMsg != null and actMsg != '' ">ACT_MSG,</if>
+        	<if test="sendTime != null">SEND_TIME,</if>
+        	<if test="updateTime != null">UPDATE_TIME,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+        	<if test="id != null">#{id},</if>
+        	<if test="mobile != null and mobile != '' ">#{mobile},</if>
+        	<if test="content != null and content != '' ">#{content},</if>
+        	<if test="smsType != null and smsType != '' ">#{smsType},</if>
+        	<if test="smsId != null and smsId != '' ">#{smsId},</if>
+        	<if test="status != null and status != '' ">#{status},</if>
+        	<if test="msg != null and msg != '' ">#{msg},</if>
+        	<if test="actStatus != null and actStatus != '' ">#{actStatus},</if>
+        	<if test="actMsg != null and actMsg != '' ">#{actMsg},</if>
+        	<if test="sendTime != null">#{sendTime},</if>
+        	<if test="updateTime != null">#{updateTime},</if>
+		</trim>
+	</insert>
+</mapper>

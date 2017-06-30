@@ -1,0 +1,60 @@
+package ${mapper_package};
+
+import ${entity_package}.${Entity};
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+ /** 
+ * @ClassName: ${Entity}Mapper
+ * @Description: ${tableInfEntity.description}(${tableInfEntity.tableName})对应Mapper
+ * @author ${autoGenInf.author}
+ * @date ${autoGenInf.date} 
+ */
+public interface ${Entity}Mapper {
+	/**
+	 * 
+	 * <p>Title: </p> 
+	 * <p>Description: 动态插入数据</p> 
+	 * @param entity
+	 * @return
+	 */
+	public Integer insertSelective(${Entity} entity) ;
+
+	/**
+	* 根据条件获取列表
+	* @param entity
+	* @return
+	*/
+	List<${Entity}>  loadList(@Param("offset")int offset,@Param("pageSize")int pageSize,${Entity} entity);
+
+	/**
+	* 根据条件获取个数
+	* @param entity
+	* @return
+	*/
+  	Integer loadCount(${Entity} entity);
+
+	/**
+	* 更新
+	* @param entity
+	* @return
+	*/
+	Integer update(${Entity} entity);
+
+	/**
+	* 删除
+	* @param entity
+	* @return
+	*/
+	Integer delete(${Entity} entity);
+
+	/**
+	* 根据条件获取单个对象
+	* @param entity
+	* @return
+	*/
+	${Entity} find(${Entity} entity);
+
+
+}

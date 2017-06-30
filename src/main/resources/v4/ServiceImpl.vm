@@ -1,0 +1,122 @@
+package ${service_impl_package};
+
+import ${entity_package}.${Entity};
+import ${service_package}.${Entity}Service;
+import ${mapper_package}.${Entity}Mapper;
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
+
+import com.gomefinance.account.data.dto.Page;
+import com.gomefinance.account.data.dto.EntityWrapperResponse;
+import com.gomefinance.account.common.enmus.EnumSystem;
+
+ /** 
+ * @ClassName: ${Entity}ServiceImpl
+ * @Description: ${tableInfEntity.description}(${tableInfEntity.tableName})对应Service实现
+ * @author ${autoGenInf.author}
+ * @date ${autoGenInf.date} 
+ */
+@Service("${EntityLow}Service")
+public class ${Entity}ServiceImpl implements ${Entity}Service{
+		
+	/** 
+	 * @Fields ${Entity}Mapper : ${tableInfEntity.description}MAPPER
+	 */
+	@Autowired
+	private ${Entity}Mapper ${EntityLow}Mapper;
+	/** 
+	* @Title: queryPage 
+	* @Description: 分页查询${tableInfEntity.description}
+	* @param page
+	* @param t
+	* @return 
+	*/
+	@Override
+	public Page<${Entity}> queryPage(Page<${Entity}> page,${Entity} t) {
+		List<${Entity}> list = ${EntityLow}Mapper.loadList(page.getOffset(),page.getPageSize(),t);
+        int count = ${EntityLow}Mapper.loadCount(t);
+        return page.hold(list,count);
+	}
+	/** 
+	* @Title: add 
+	* @Description: 添加${tableInfEntity.description}
+	* @param entity
+	* @return 
+	*/
+	@Override
+	public EntityWrapperResponse add(${Entity} entity) {
+		Integer result = ${EntityLow}Mapper.insertSelective(entity);
+		if(result==0){
+			return new EntityWrapperResponse(EnumSystem.FAIL,"新增失败");
+		}
+		return new EntityWrapperResponse(EnumSystem.OK,"新增成功");
+	}
+	/** 
+	* @Title: findOne 
+	* @Description: 查询${tableInfEntity.description}
+	* @param entity
+	* @return 
+	*/
+	@Override
+	public ${Entity} findOne(${Entity} entity) {
+		${Entity} u=${EntityLow}Mapper.find(entity);
+		return u;
+	}
+	/** 
+	* @Title: update 
+	* @Description: 更新${tableInfEntity.description}
+	* @param entity
+	* @return 
+	*/
+	@Override
+	public EntityWrapperResponse update(${Entity} entity) {
+		Integer result = ${EntityLow}Mapper.update(entity);
+		if(result==0){
+			return new EntityWrapperResponse(EnumSystem.FAIL,"更新失败");
+		}
+		return new EntityWrapperResponse(EnumSystem.OK,"更新成功");
+	}
+	
+	/** 
+	* @Title: delete
+	* @Description: 删除
+	* @param entity
+	* @return 
+	*/
+	@Override
+	public EntityWrapperResponse delete(${Entity} entity) {
+		Integer result = ${EntityLow}Mapper.delete(entity);
+		if(result==0){
+			return new EntityWrapperResponse(EnumSystem.FAIL,"删除失败");
+		}
+		return new EntityWrapperResponse(EnumSystem.OK,"删除成功");
+	}
+
+	/**
+	* @Title: saveOrUpdate
+	* @Description: 新增或修改
+	* @param entity
+	* @return
+	*/
+	@Override
+	public EntityWrapperResponse saveOrUpdate(@NotNull ${Entity} entity) {
+		if(entity==null){
+			return new EntityWrapperResponse(EnumSystem.FAIL,"${Entity}不能为空");
+		}
+		Integer result;
+		if(!StringUtils.isEmpty(entity.getId())){
+			result = ${EntityLow}Mapper.update(entity);
+		}else{
+			result = ${EntityLow}Mapper.insertSelective(entity);
+		}
+		if(result==0){
+			return new EntityWrapperResponse(EnumSystem.FAIL,"新增或修改成功");
+		}
+		return new EntityWrapperResponse(EnumSystem.OK,"新增或修改成功");
+	}
+
+}

@@ -1,0 +1,69 @@
+package ${entity_package};
+
+#foreach($package in $autoGenInf.packages)
+import ${package};
+#end
+import java.io.Serializable;
+/**
+ * @ClassName: ${Entity} 
+ * @description : ${tableInfEntity.description}(${tableInfEntity.tableName}) 对应的Entity
+ * @author      ${autoGenInf.author}
+ * @version     1.0  
+ * @date        ${autoGenInf.date} 
+ */
+public class ${Entity} implements Serializable{
+
+	/**
+	 * 	表名*	${tableInfEntity.tableName}			
+	 *	署主*	${tableInfEntity.schema}			
+	 *	说明*	${tableInfEntity.description}			
+	 *	主键*${tableInfEntity.primaryKeyMap}	
+	 *	索引*${tableInfEntity.uniqueKeyMap}		
+	 */
+	private static final long serialVersionUID = 1L;
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+	/**
+	 * @Fields ${field.value.jcolumnName} : ${field.value.description}
+	 */
+	private ${field.value.jdataType} ${field.value.jcolumnName};
+
+#end
+
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+	/**
+	 * 获取[${field.value.description}]值
+	 * @return 见{@link #${field.value.jcolumnName}} 
+	 */
+	public ${field.value.jdataType} get${field.value.jfunctionName}() {
+		return ${field.value.jcolumnName};
+	}
+	/**
+	 * 设置[${field.value.description}]值
+	 * @param ${field.value.jcolumnName} 见{@link #${field.value.jcolumnName}} 
+	 */
+	public void set${field.value.jfunctionName}(${field.value.jdataType} ${field.value.jcolumnName}) {
+		this.${field.value.jcolumnName} = ${field.value.jcolumnName};
+	}
+#end
+
+	/* 
+	 * desc:输出实体String
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("${Entity} [");
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+		if (${field.value.jcolumnName} != null) {
+			builder.append("${field.value.jcolumnName}=");
+			builder.append(${field.value.jcolumnName});
+			builder.append(", ");
+		}
+#end
+		builder.append("]");
+		return builder.toString();
+	}
+	
+}

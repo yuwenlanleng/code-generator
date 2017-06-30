@@ -1,0 +1,48 @@
+${Entity} = {
+    datatable: null,
+    init:function(){
+        this.list();
+    },
+    search:function(){
+        $('#${EntityLow}-table').datagrid('load',{
+
+        });
+    },
+    formatDatebox:function(value){
+        if (value == null || value == '') {
+            return '';
+        }
+        return value.substr(0,10);
+    },
+    reset:function(){
+        $('#${EntityLow}-tab').find('input').val('');
+        $('#${EntityLow}-tab').find('select').val('');
+    },
+    list: function () {
+        ${Entity}.datatable = $("#${EntityLow}-table").datagrid({
+            url: '/${EntityLow}/list',
+            //view: detailview,
+            border: false,
+            fit: true,
+            singleSelect: true,
+            fitColumns: true,
+            rownumbers: true,
+            nowrap: true,
+            pagination: true,
+            toolbar: '#${EntityLow}-tab',
+            columns: [
+                [
+#foreach($field in $tableInfEntity.columnMap.entrySet())
+    #if(${field.value.showList})
+        #if(${field.value.boxType} == 'DATEBOX')
+{field: '${field.value.jcolumnName}', width: '8%', title: '${field.value.description}',formatter:${Entity}.formatDatebox},
+        #elseif(${field.value.boxType} == 'TEXTBOX')
+{field: '${field.value.jcolumnName}', width: '8%', title: '${field.value.description}'},
+        #end
+    #end
+#end
+                ]
+            ]
+        });
+    }
+};

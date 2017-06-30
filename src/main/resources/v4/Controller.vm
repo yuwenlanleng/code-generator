@@ -1,0 +1,83 @@
+package ${action_package};
+
+import ${entity_package}.${Entity};
+import ${service_package}.${Entity}Service;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gomefinance.account.data.dto.EntityWrapperResponse;
+import com.gomefinance.account.data.dto.Page;
+import com.gomefinance.account.common.enmus.EnumSystem;
+
+ /**
+ * @ClassName: ${Entity}Controller
+ * @Description: ${tableInfEntity.description}(${tableInfEntity.tableName})对应Controller实现
+ * @author ${autoGenInf.author}
+ * @date ${autoGenInf.date} 
+ */
+@Controller
+@RequestMapping("/${EntityLow}")
+public class ${Entity}Controller extends BaseController{
+		
+	private static final Logger logger=LoggerFactory.getLogger(${Entity}Controller.class);
+
+	public ${Entity}Controller() {
+		this.pathPrefix = this.pathPrefix + "${EntityLow}/";
+	}
+	@Autowired
+	private ${Entity}Service ${EntityLow}Service;
+
+
+	/**
+	* 初始页面.
+	* @return
+	*/
+	@RequestMapping("/main")
+	public String main(){
+		return view("main");
+	}
+
+	/**
+	* 分页查询
+	* @param request
+	* @param rows
+	* @param page
+	* @param entity
+	* @return
+	*/
+	@RequestMapping(value = "/list",method = RequestMethod.POST)
+	@ResponseBody
+	public Page<${Entity}> list(HttpServletRequest request, int rows, int page,${Entity} entity){
+		return ${EntityLow}Service.queryPage(new Page<${Entity}>(rows,page),entity);
+	}
+
+	/**
+	* 新增(修改)${Entity}
+	* @param entity
+	* @return EntityWrapperResponse
+	*/
+	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST)
+	@ResponseBody
+	public EntityWrapperResponse saveOrUpdate(HttpServletRequest request,${Entity} entity) {
+		return ${EntityLow}Service.saveOrUpdate(entity);
+	}
+
+	/**
+	* 删除${Entity}
+	* @param entity
+	* @return EntityWrapperResponse
+	*/
+	@RequestMapping(value = "/del", method = RequestMethod.POST)
+	@ResponseBody
+	public EntityWrapperResponse delete(HttpServletRequest request,${Entity} entity) {
+		return ${EntityLow}Service.delete(entity);
+	}
+
+}
