@@ -1,5 +1,6 @@
 # code-generator
 在国美同事推荐的代码生成工具
+根据excel生成对应的文件
 使用方法：
 	①在excel中设置好表
 	②运行MainWindow.java文件
